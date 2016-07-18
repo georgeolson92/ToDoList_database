@@ -120,6 +120,28 @@ namespace ToDoList.Objects
     }
 
     [Fact]
+    public void Test_Delete_DeletesCategoryAssociationsFromDatabase()
+    {
+      //Arrange
+      Task testTask = new Task("Mow the lawn", new DateTime(2015, 1, 18));
+      testTask.Save();
+
+      string testName = "Home stuff";
+      Category testCategory = new Category(testName);
+      testCategory.Save();
+
+      //Act
+      testCategory.AddTask(testTask);
+      testCategory.Delete();
+
+      List<Category> resultTaskCategories = testTask.GetCategories();
+      List<Category> testTaskCategories = new List<Category> {};
+
+      //Assert
+      Assert.Equal(testTaskCategories, resultTaskCategories);
+    }
+
+    [Fact]
     public void Test_AddTask_AddsTaskToCategory()
     {
       //Arrange
