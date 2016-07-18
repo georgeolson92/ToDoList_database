@@ -86,16 +86,61 @@ namespace ToDoList.Objects
       Category testCategory = new Category("Household chores");
       testCategory.Save();
 
-      Task firstTask = new Task("Mow the lawn", testCategory.GetId(), new DateTime(2015, 1, 18));
+      Task firstTask = new Task("Mow the lawn", new DateTime(2015, 1, 18));
       firstTask.Save();
-      Task secondTask = new Task("Do the dishes", testCategory.GetId(), new DateTime(2015, 1, 18));
+      Task secondTask = new Task("Do the dishes", new DateTime(2015, 1, 18));
       secondTask.Save();
 
-
-      List<Task> testTaskList = new List<Task> {firstTask, secondTask};
+      testCategory.AddTask(firstTask);
+      List<Task> testTaskList = new List<Task> {firstTask};
       List<Task> resultTaskList = testCategory.GetTasks();
 
       Assert.Equal(testTaskList, resultTaskList);
+    }
+
+    [Fact]
+    public void Test_Delete_DeletesCategoryFromDatabase()
+    {
+      //Arrange
+      string name1 = "Home stuff";
+      Category testCategory1 = new Category(name1);
+      testCategory1.Save();
+
+      string name2 = "Work stuff";
+      Category testCategory2 = new Category(name2);
+      testCategory2.Save();
+
+      //Act
+      testCategory1.Delete();
+      List<Category> resultCategories = Category.GetAll();
+      List<Category> testCategoryList = new List<Category> {testCategory2};
+
+      //Assert
+      Assert.Equal(testCategoryList, resultCategories);
+    }
+
+    [Fact]
+    public void Test_AddTask_AddsTaskToCategory()
+    {
+      //Arrange
+      Category testCategory = new Category("Household chores");
+      testCategory.Save();
+
+      Task testTask = new Task("Mow the lawn", new DateTime(2015, 1, 18));
+      testTask.Save();
+
+      Task testTask2 = new Task("Water the garden", new DateTime(2015, 1, 18));
+      testTask2.Save();
+
+      //Act
+      testCategory.AddTask(testTask);
+      testCategory.AddTask(testTask2);
+
+      List<Task> result = testCategory.GetTasks();
+      List<Task> testList = new List<Task>{testTask, testTask2};
+
+      //Assert
+      Assert.Equal(testList, result);
     }
 
     public void Dispose()
