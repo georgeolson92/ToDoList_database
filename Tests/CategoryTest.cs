@@ -86,9 +86,9 @@ namespace ToDoList.Objects
       Category testCategory = new Category("Household chores");
       testCategory.Save();
 
-      Task firstTask = new Task("Mow the lawn", new DateTime(2015, 1, 18));
+      Task firstTask = new Task("Mow the lawn", new DateTime(2015, 1, 18), false);
       firstTask.Save();
-      Task secondTask = new Task("Do the dishes", new DateTime(2015, 1, 18));
+      Task secondTask = new Task("Do the dishes", new DateTime(2015, 1, 18), false);
       secondTask.Save();
 
       testCategory.AddTask(firstTask);
@@ -123,7 +123,7 @@ namespace ToDoList.Objects
     public void Test_Delete_DeletesCategoryAssociationsFromDatabase()
     {
       //Arrange
-      Task testTask = new Task("Mow the lawn", new DateTime(2015, 1, 18));
+      Task testTask = new Task("Mow the lawn", new DateTime(2015, 1, 18), false);
       testTask.Save();
 
       string testName = "Home stuff";
@@ -148,10 +148,10 @@ namespace ToDoList.Objects
       Category testCategory = new Category("Household chores");
       testCategory.Save();
 
-      Task testTask = new Task("Mow the lawn", new DateTime(2015, 1, 18));
+      Task testTask = new Task("Mow the lawn", new DateTime(2015, 1, 18), false);
       testTask.Save();
 
-      Task testTask2 = new Task("Water the garden", new DateTime(2015, 1, 18));
+      Task testTask2 = new Task("Water the garden", new DateTime(2015, 1, 18), false);
       testTask2.Save();
 
       //Act

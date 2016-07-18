@@ -229,19 +229,14 @@ namespace ToDoList.Objects
           int thisTaskId = queryReader.GetInt32(0);
           string taskDescription = queryReader.GetString(1);
           DateTime taskDueDate = queryReader.GetDateTime(2);
-          Task foundTask = new Task(taskDescription, taskDueDate, thisTaskId);
+          bool taskCompleted = queryReader.GetBoolean(3);
+          Task foundTask = new Task(taskDescription, taskDueDate, taskCompleted, thisTaskId);
           tasks.Add(foundTask);
         }
         if (queryReader != null)
         {
           queryReader.Close();
         }
-      }
-
-
-      if (conn != null)
-      {
-        conn.Close();
       }
       return tasks;
     }

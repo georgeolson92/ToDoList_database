@@ -9,12 +9,14 @@ namespace ToDoList.Objects
     private int _id;
     private string _description;
     private DateTime _dueDate = new DateTime();
+    private bool _completed;
 
-    public Task(string Description, DateTime DueDate, int Id = 0)
+    public Task(string Description, DateTime DueDate, bool Completed = false, int Id = 0)
     {
       _id = Id;
       _description = Description;
       _dueDate = DueDate;
+      _completed = Completed;
     }
 
     public override bool Equals(System.Object otherTask)
@@ -29,7 +31,8 @@ namespace ToDoList.Objects
         bool idEquality = this.GetId() == newTask.GetId();
         bool descriptionEquality = this.GetDescription() == newTask.GetDescription();
         bool dueEquality = this.GetDueDate() == newTask.GetDueDate();
-        return (idEquality && descriptionEquality && dueEquality);
+        bool completedEquality = this.GetCompleted() == newTask.GetCompleted();
+        return (idEquality && descriptionEquality && dueEquality && completedEquality);
       }
     }
 
@@ -53,6 +56,14 @@ namespace ToDoList.Objects
     {
       _dueDate = newDueDate;
     }
+    public bool GetCompleted()
+    {
+      return _completed;
+    }
+    public void SetCompleted(bool newCompleted)
+    {
+      _completed = newCompleted;
+    }
     public static List<Task> GetAll()
     {
       List<Task> AllTasks = new List<Task>{};
@@ -69,7 +80,8 @@ namespace ToDoList.Objects
         int taskId = rdr.GetInt32(0);
         string taskDescription = rdr.GetString(1);
         DateTime taskDueDate = rdr.GetDateTime(2);
-        Task newTask = new Task(taskDescription, taskDueDate, taskId);
+        bool taskCompleted = rdr.GetBoolean(3);
+        Task newTask = new Task(taskDescription, taskDueDate, taskCompleted, taskId);
         AllTasks.Add(newTask);
       }
       if (rdr != null)
@@ -88,7 +100,7 @@ namespace ToDoList.Objects
       SqlDataReader rdr;
       conn.Open();
 
-      SqlCommand cmd = new SqlCommand("INSERT INTO tasks (description, duedate) OUTPUT INSERTED.id VALUES (@TaskDescription, @TaskDueDate);", conn);
+      SqlCommand cmd = new SqlCommand("INSERT INTO tasks (description, duedate, completed) OUTPUT INSERTED.id VALUES (@TaskDescription, @TaskDueDate, @TaskCompleted);", conn);
 
       SqlParameter descriptionParameter = new SqlParameter();
       descriptionParameter.ParameterName = "@TaskDescription";
@@ -98,8 +110,13 @@ namespace ToDoList.Objects
       dueDateParameter.ParameterName = "@TaskDueDate";
       dueDateParameter.Value = this.GetDueDate();
 
+      SqlParameter completedParameter = new SqlParameter();
+      completedParameter.ParameterName = "@TaskCompleted";
+      completedParameter.Value = this.GetCompleted();
+
       cmd.Parameters.Add(descriptionParameter);
       cmd.Parameters.Add(dueDateParameter);
+      cmd.Parameters.Add(completedParameter);
 
       rdr = cmd.ExecuteReader();
 
@@ -133,14 +150,16 @@ namespace ToDoList.Objects
       int foundTaskId = 0;
       string foundTaskDescription = null;
       DateTime foundTaskDueDate = new DateTime(0);
+      bool foundTaskCompleted = false;
 
       while(rdr.Read())
       {
         foundTaskId = rdr.GetInt32(0);
         foundTaskDescription = rdr.GetString(1);
         foundTaskDueDate = rdr.GetDateTime(2);
+        foundTaskCompleted = rdr.GetBoolean(3);
       }
-      Task foundTask = new Task(foundTaskDescription, foundTaskDueDate, foundTaskId);
+      Task foundTask = new Task(foundTaskDescription, foundTaskDueDate, foundTaskCompleted, foundTaskId);
 
       if (rdr != null)
       {
@@ -259,6 +278,55 @@ namespace ToDoList.Objects
 
       cmd.Parameters.Add(taskIdParameter);
       cmd.ExecuteNonQuery();
+
+      if (conn != null)
+      {
+        conn.Close();
+      }
+    }
+
+
+    public void Update(string newName, DateTime newDueDate, bool newCompleted)
+    {
+      SqlConnection conn = DB.Connection();
+      SqlDataReader rdr;
+      conn.Open();
+
+      SqlCommand cmd = new SqlCommand("UPDATE tasks SET description = @NewName, duedate = @NewDueDate, completed = @NewCompleted OUTPUT INSERTED.description, INSERTED.duedate, INSERTED.completed WHERE id = @TaskId;", conn);
+
+      SqlParameter newNameParameter = new SqlParameter();
+      newNameParameter.ParameterName = "@NewName";
+      newNameParameter.Value = newName;
+      cmd.Parameters.Add(newNameParameter);
+
+      SqlParameter newDueDateParameter = new SqlParameter();
+      newDueDateParameter.ParameterName = "@NewDueDate";
+      newDueDateParameter.Value = newDueDate;
+      cmd.Parameters.Add(newDueDateParameter);
+
+      SqlParameter newCompletedParameter = new SqlParameter();
+      newCompletedParameter.ParameterName = "@NewCompleted";
+      newCompletedParameter.Value = newCompleted;
+      cmd.Parameters.Add(newCompletedParameter);
+
+
+      SqlParameter taskIdParameter = new SqlParameter();
+      taskIdParameter.ParameterName = "@TaskId";
+      taskIdParameter.Value = this.GetId();
+      cmd.Parameters.Add(taskIdParameter);
+      rdr = cmd.ExecuteReader();
+
+      while(rdr.Read())
+      {
+        this._description = rdr.GetString(0);
+        this._dueDate = rdr.GetDateTime(1);
+        this._completed = rdr.GetBoolean(2);
+      }
+
+      if (rdr != null)
+      {
+        rdr.Close();
+      }
 
       if (conn != null)
       {

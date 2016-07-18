@@ -78,7 +78,34 @@ namespace ToDoList
         category.AddTask(task);
         return View["success.cshtml"];
       };
-
+      Get["/task/edit/{id}"] = parameters => {
+        Task SelectedTask = Task.Find(parameters.id);
+        return View["task_edit.cshtml", SelectedTask];
+      };
+      Patch["/task/edit/{id}"] = parameters => {
+        Task SelectedTask = Task.Find(parameters.id);
+        SelectedTask.Update(Request.Form["new-task-description"], Request.Form["new-due-date"], Request.Form["new-task-completed"]);
+        Console.WriteLine(Request.Form["new-due-date"]);
+        return View["success.cshtml"];
+      };
+      Get["/task/delete/{id}"] = parameters => {
+        Task SelectedTask = Task.Find(parameters.id);
+        return View["task_delete.cshtml", SelectedTask];
+      };
+      Delete["task/delete/{id}"] = parameters => {
+        Task SelectedTask = Task.Find(parameters.id);
+        SelectedTask.Delete();
+        return View["success.cshtml"];
+      };
+      Get["/category/delete/{id}"] = parameters => {
+        Category SelectedCategory = Category.Find(parameters.id);
+        return View["category_delete.cshtml", SelectedCategory];
+      };
+      Delete["category/delete/{id}"] = parameters => {
+        Category SelectedCategory = Category.Find(parameters.id);
+        SelectedCategory.Delete();
+        return View["success.cshtml"];
+      };
     }
   }
 }

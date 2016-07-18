@@ -32,8 +32,8 @@ namespace ToDoList.Objects
     public void Test_Equal_ReturnsTrueIfDescriptionsAreTheSame()
     {
       //Arrange, Act
-      Task firstTask = new Task("Mow the lawn", new DateTime(2015, 1, 18));
-      Task secondTask = new Task("Mow the lawn", new DateTime(2015, 1, 18));
+      Task firstTask = new Task("Mow the lawn", new DateTime(2015, 1, 18), false);
+      Task secondTask = new Task("Mow the lawn", new DateTime(2015, 1, 18), false);
 
       //Assert
       Assert.Equal(firstTask, secondTask);
@@ -43,7 +43,7 @@ namespace ToDoList.Objects
     public void Test_Save_SavesToDatabase()
     {
       //Arrange
-      Task testTask = new Task("Mow the lawn", new DateTime(2015, 1, 18));
+      Task testTask = new Task("Mow the lawn", new DateTime(2015, 1, 18), false);
 
       //Act
       testTask.Save();
@@ -58,7 +58,7 @@ namespace ToDoList.Objects
     public void Test_Save_AssignsIdToObject()
     {
       //Arrange
-      Task testTask = new Task("Mow the lawn", new DateTime(2015, 1, 18));
+      Task testTask = new Task("Mow the lawn", new DateTime(2015, 1, 18), false);
 
       //Act
       testTask.Save();
@@ -75,7 +75,7 @@ namespace ToDoList.Objects
     public void Test_Find_FindsTaskInDatabase()
     {
       //Arrange
-      Task testTask = new Task("Mow the lawn", new DateTime(2015, 1, 18));
+      Task testTask = new Task("Mow the lawn", new DateTime(2015, 1, 18), false);
       testTask.Save();
 
       //Act
@@ -89,8 +89,8 @@ namespace ToDoList.Objects
     public void Test_EqualOverrideTrueForSameDescription()
     {
       //Arrange, Act
-      Task firstTask = new Task("Mow the lawn", new DateTime(2015, 1, 18));
-      Task secondTask = new Task("Mow the lawn", new DateTime(2015, 1, 18));
+      Task firstTask = new Task("Mow the lawn", new DateTime(2015, 1, 18), false);
+      Task secondTask = new Task("Mow the lawn", new DateTime(2015, 1, 18), false);
 
       //Assert
       Assert.Equal(firstTask, secondTask);
@@ -100,7 +100,7 @@ namespace ToDoList.Objects
     public void Test_Save()
     {
       //Arrange
-      Task testTask = new Task("Mow the lawn", new DateTime(2015, 1, 18));
+      Task testTask = new Task("Mow the lawn", new DateTime(2015, 1, 18), false);
       testTask.Save();
 
       //Act
@@ -115,7 +115,7 @@ namespace ToDoList.Objects
     public void Test_SaveAssignsIdToObject()
     {
       //Arrange
-      Task testTask = new Task("Mow the lawn", new DateTime(2015, 1, 18));
+      Task testTask = new Task("Mow the lawn", new DateTime(2015, 1, 18), false);
       testTask.Save();
 
       //Act
@@ -132,7 +132,7 @@ namespace ToDoList.Objects
     public void Test_FindFindsTaskInDatabase()
     {
       //Arrange
-      Task testTask = new Task("Mow the lawn", new DateTime(2015, 1, 18));
+      Task testTask = new Task("Mow the lawn", new DateTime(2015, 1, 18), false);
       testTask.Save();
 
       //Act
@@ -146,7 +146,7 @@ namespace ToDoList.Objects
     public void Test_AddCategory_AddsCategoryToTask()
     {
       //Arrange
-      Task testTask = new Task("Mow the lawn", new DateTime(2015, 1, 18));
+      Task testTask = new Task("Mow the lawn", new DateTime(2015, 1, 18), false);
       testTask.Save();
 
       Category testCategory = new Category("Home stuff");
@@ -166,7 +166,7 @@ namespace ToDoList.Objects
     public void Test_GetCategories_ReturnsAllTaskCategories()
     {
       //Arrange
-      Task testTask = new Task("Mow the lawn", new DateTime(2015, 1, 18));
+      Task testTask = new Task("Mow the lawn", new DateTime(2015, 1, 18), false);
       testTask.Save();
 
       Category testCategory1 = new Category("Home stuff");
@@ -192,7 +192,7 @@ namespace ToDoList.Objects
       testCategory.Save();
 
       string testDescription = "Mow the lawn";
-      Task testTask = new Task(testDescription, new DateTime(2015, 1, 18));
+      Task testTask = new Task(testDescription, new DateTime(2015, 1, 18), false);
       testTask.Save();
 
       //Act
@@ -204,6 +204,28 @@ namespace ToDoList.Objects
 
       //Assert
       Assert.Equal(testCategoryTasks, resultCategoryTasks);
+    }
+
+    [Fact]
+    public void Test_Update_UpdatesTaskInDatabase()
+    {
+      //Arrange
+      Task newTask = new Task("Mow the lawn", new DateTime(2015, 1, 18), false);
+      newTask.Save();
+      string newDescription = "Cut the grass";
+      DateTime newDueDate = new DateTime(2016, 2, 19);
+      bool newCompleted = true;
+
+      //Act
+      newTask.Update(newDescription, newDueDate, newCompleted);
+      string resultNewDescription = newTask.GetDescription();
+      DateTime resultNewDueDate = newTask.GetDueDate();
+      bool resultNewCompleted = newTask.GetCompleted();
+
+      //Assert
+      Assert.Equal(newDescription, resultNewDescription);
+      Assert.Equal(newDueDate, resultNewDueDate);
+      Assert.Equal(newCompleted, resultNewCompleted);
     }
   }
 }

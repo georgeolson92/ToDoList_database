@@ -1,0 +1,8 @@
+<h2>@Model.GetDescription()</h2>
+<p>Are you sure you want to delete this task?</p>
+<form action="/task/delete/@Model.GetId()" method="post">
+  <input type="hidden" name="_method" value="DELETE">
+  <button type="submit">Delete task</button>
+</form>
+<p><a href="/">Back home</a></p>
+<p><a href="/tasks">View all tasks</a></p>
